@@ -1,0 +1,26 @@
+{
+  "name": "colorspaces",
+  "version": "0.0.0",
+  "homepage": "https://github.com/connorgr/colorspaces",
+  "authors": [
+    "connorgr <connor@cs.brown.edu>"
+  ],
+  "description": "A repository illustrating the differences between different color spaces",
+  "keywords": [
+    "color"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "~3.5.6",
+    "jquery": "~2.1.4",
+    "three.js": "~0.71.0"
+  }
+}

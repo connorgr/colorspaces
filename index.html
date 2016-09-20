@@ -1,0 +1,74 @@
+<html>
+<head>
+  <style>
+    * {
+      font-family: "HelveticaNeue-Thin", "Helvetica Neue Thin", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    }
+    .container {
+      display: inline-block;
+    }
+    h1, p {
+      max-width: 600px;
+    }
+    .container > * { display: inline-block; }
+    #controls {
+      list-style-type: none;
+    }
+  </style>
+  <script id="shader-fs" type="x-shader/x-fragment">
+  	varying lowp vec4 vColor;
+
+    void main(void) {
+      gl_FragColor = vColor;
+    }
+  </script>
+  <script id="shader-vs" type="x-shader/x-vertex">
+    attribute vec3 aVertexPosition;
+    attribute vec4 aVertexColor;
+
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+
+    varying lowp vec4 vColor;
+
+    void main(void) {
+      gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+      vColor = aVertexColor;
+    }
+  </script>
+  <script src="lib/jquery/dist/jquery.min.js"></script>
+  <script src="lib/d3/d3.min.js"></script>
+  <script src="lib/three.js/three.js"></script>
+  <script src="cielab/sylvester.js"></script>
+  <script src="cielab/glUtil.js"></script>
+  <script src="cielab/threeUtil-convex.js"></script>
+  <script src="cielab/scene-lab.js"></script>
+  <script src="cielab/controls.js"></script>
+</head>
+
+<body>
+  <h1>RGB color space comparison: CIELAB (perceptual distance) vs RGB Cube</h1>
+  <p>Below is a side-by-side comparison of RGB color space shown as the typical
+    RGB cube (right) and the same volume after being transformed into CIELAB.
+    The volume is approximated by taking the convex hull of a discretized CIELAB
+    space.</p>
+  <div class="container">
+    <div id="labContainer"></div>
+    <ul id="controls">
+      <li>Pitch: <input id="control-pitch" type="range" min=0 max=360 value=30></input></li>
+      <li>Yaw: <input id="control-yaw" type="range" min=0 max=360 value=30></input></li>
+      <li>Roll: <input id="control-roll" type="range" min=0 max=360 value=0></input></li>
+    </ul>
+  </div>
+
+  <h1>Color space illustrations</h1>
+  <img src="add-sub-light.svg" width="400px" />
+  <p>Above: additive vs. subtractive color.</p>
+  <img src="lch.svg" width="400px" />
+  <p>Above: CIELCh color space</p>
+  <img src="opponentProcessing.svg" width="400px" />
+  <p>Above: opponent processing.</p>
+
+</body>
+
+</html>
