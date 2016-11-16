@@ -1,0 +1,113 @@
+<html>
+<head>
+  <style>
+    * {
+      font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    }
+
+    body {
+      background-color: #68affc;
+      padding-top: 50px;
+    }
+
+    .colorPanel {
+      background: #eee;
+      border-left: 1px solid #ccc;
+      border-right: 1px solid #ccc;
+      display: inline-block;
+      margin: 5px 0 0 0;
+      padding: 15px;
+      vertical-align:top;
+      width: 200px;
+    }
+    .colorPanel p { text-align: right; }
+
+    .title { margin-bottom: 15px; padding-bottom: 10px; }
+    .title > span { background: rgba(255, 255, 255, 0.85); font-weight: bold; padding: 15px; }
+  </style>
+  <script src="lib/jquery/dist/jquery.min.js"></script>
+  <script src="lib/d3/d3.min.js"></script>
+</head>
+
+<body>
+  <div class="title"><span>Color swatch preview<span></div>
+  <div class="container">
+    <div class="colorPanel CIELChPanel">
+      <strong>CIELCh (HCL)</strong>
+      <p>Lightness: <input type="number" data-space="CIELCh" data-channel="Lightness" value="70" /></p>
+      <p>Chroma: <input type="number" data-space="CIELCh" data-channel="Chroma" value="45" /></p>
+      <p>hue: <input type="number" data-space="CIELCh" data-channel="hue" value="270" /></p>
+    </div>
+    <div class="colorPanel CIELABPanel">
+      <strong>CIELAB</strong>
+      <p>Lightness: <input type="number" data-space="CIELAB" data-channel="Lightness" value="70" /></p>
+      <p>a*: <input type="number" data-space="CIELAB" data-channel="a" value="0" /></p>
+      <p>b*: <input type="number" data-space="CIELAB" data-channel="b" value="-45" /></p>
+    </div>
+    <div class="colorPanel RGBPanel">
+      <strong>RGB</strong>
+      <p>R: <input type="number" data-space="RGB" data-channel="Red" value="104" /></p>
+      <p>G: <input type="number" data-space="RGB" data-channel="Green" value="175" /></p>
+      <p>B: <input type="number" data-space="RGB" data-channel="Blue" value="252" /></p>
+      <p>Hex: <input type="text" data-space="RGB_hex" data-channel="RGB_hex" value="#68affc"/>
+    </div>
+
+<script>
+  d3.selectAll(".colorPanel p input").on("input", function() {
+    var thisEl = d3.select(this),
+        thisSpace = thisEl.attr('data-space'),
+        panelName = thisSpace + 'Panel',
+        newColor;
+
+    function inputFieldSelect(panelName,channelName) {
+      var panel = d3.select('.'+panelName);
+      return panel.select('input[data-channel='+channelName+']');
+    }
+    if(thisSpace === "CIELCh") {
+      var l = +inputFieldSelect("CIELChPanel", "Lightness").property('value'),
+          c = +inputFieldSelect("CIELChPanel", "Chroma").property('value'),
+          h = +inputFieldSelect("CIELChPanel", "hue").property('value');
+      newColor = d3.hcl(h,c,l);
+    } else if(thisSpace === "CIELAB") {
+      var l = +inputFieldSelect("CIELABPanel", "Lightness").property('value'),
+          a = +inputFieldSelect("CIELABPanel", "a").property('value'),
+          b = +inputFieldSelect("CIELABPanel", "b").property('value');
+      newColor = d3.lab(l,a,b);
+    } else if(thisSpace === "RGB") {
+      var r = +inputFieldSelect("RGBPanel", "Red").property('value'),
+          g = +inputFieldSelect("RGBPanel", "Green").property('value'),
+          b = +inputFieldSelect("RGBPanel", "Blue").property('value');
+      newColor = d3.rgb(r,g,b);
+    } else if(thisSpace === "RGB_hex") {
+      newColor = d3.rgb(thisEl.property('value'));
+    }
+
+    var hcl = d3.hcl(newColor),
+        lab = d3.lab(newColor),
+        rgb = d3.rgb(newColor);
+
+    d3.select('body').style('background-color', newColor);
+
+
+    inputFieldSelect("CIELChPanel", "Lightness").property('value', hcl.l);
+    if(lab.a !== 0 && lab.b !== 0) {
+      inputFieldSelect("CIELChPanel", "Chroma").property('value', hcl.c);
+      inputFieldSelect("CIELChPanel", "hue").property('value', hcl.h < 0 ? hcl.h+360 : hcl.h);
+    } else {
+      inputFieldSelect("CIELChPanel", "Chroma").property('value', 0);
+    }
+
+    inputFieldSelect("CIELABPanel", "Lightness").property('value', lab.l);
+    inputFieldSelect("CIELABPanel", "a").property('value', lab.a);
+    inputFieldSelect("CIELABPanel", "b").property('value', lab.b);
+
+    inputFieldSelect("RGBPanel", "Red").property('value', rgb.r);
+    inputFieldSelect("RGBPanel", "Green").property('value', rgb.g);
+    inputFieldSelect("RGBPanel", "Blue").property('value', rgb.b);
+    inputFieldSelect("RGBPanel", "RGB_hex").property('value', rgb.toString().toUpperCase());
+
+
+  });
+</script>
+</body>
+</html>
